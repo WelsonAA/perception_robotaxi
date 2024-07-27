@@ -1,0 +1,2 @@
+vision:vision_ws
+-DCATKIN_DEVEL_PREFIX=/home/welson03/Desktop/ever24/devel -DCMAKE_INSTALL_PREFIX=/home/welson03/Desktop/ever24/install -G Unix Makefiles

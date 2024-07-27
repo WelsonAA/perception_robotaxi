@@ -1,0 +1,8 @@
+prefix=/home/welson03/Desktop/ever24/devel
+
+Name: vision_ws
+Description: Description of vision_ws
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 
