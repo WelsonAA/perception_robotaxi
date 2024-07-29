@@ -21,6 +21,8 @@ class YoloV8ObjectTracker:
         self.depth_image = None
         self.rgb_k_matrix = None
         self.depth_k_matrix = None
+        self.min_depth = 0.2  # Minimum depth in meters
+        self.max_depth = 3.0  # Maximum depth in meters
 
     def rgb_kmatrix_callback(self, data):
         self.rgb_k_matrix = np.array(data.K).reshape((3, 3))
@@ -65,28 +67,35 @@ class YoloV8ObjectTracker:
                     name = result.names[class_id]
 
                     try:
-                        # Draw the bounding box and display the coordinates
+                        # Draw the bounding box
                         cv2.rectangle(cv_image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
+                        # Calculate the center of the bounding box
+                        x_center = (xmin + xmax) // 2
+                        y_center = (ymin + ymax) // 2
+
+                        # Get the depth value at the center of the bounding box
+                        depth_value = self.depth_image[y_center, x_center]
+
+                        # Convert grayscale depth value to meters
+                        depth = self.min_depth + (self.max_depth - self.min_depth) * (255 - depth_value) / 255.0
+
+                        # Calculate 3D coordinates in the camera coordinate system using RGB camera matrix
+                        x = (x_center - self.rgb_k_matrix[0, 2]) * depth / self.rgb_k_matrix[0, 0]
+                        y = (y_center - self.rgb_k_matrix[1, 2]) * depth / self.rgb_k_matrix[1, 1]
+                        z = depth
+
+                        # Create the label with name, confidence, and coordinates
                         label = f"{name} {confidence:.2f} ({xmin},{ymin})"
+                        coordinates = f"({x:.2f}, {y:.2f}, {z:.2f})"
                         cv2.putText(cv_image, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 2)
+                        cv2.putText(cv_image, coordinates, (xmin, ymin + 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 2)
+
+                        # Publish detected object with 3D coordinates
+                        self.detection_pub.publish(f"Detected {name} at ({x:.2f}, {y:.2f}, {z:.2f}) with confidence {confidence:.2f}")
+
                     except Exception as e:
                         rospy.logerr(f"Failed to draw rectangle or text on cv_image: {e}")
                         continue
-
-                    # Calculate the center of the bounding box
-                    x_center = (xmin + xmax) // 2
-                    y_center = (ymin + ymax) // 2
-
-                    # Get the depth value at the center of the bounding box
-                    depth = self.depth_image[y_center, x_center]
-
-                    # Calculate 3D coordinates in the camera coordinate system using RGB camera matrix
-                    x = (x_center - self.rgb_k_matrix[0, 2]) * depth / self.rgb_k_matrix[0, 0]
-                    y = (y_center - self.rgb_k_matrix[1, 2]) * depth / self.rgb_k_matrix[1, 1]
-                    z = depth
-
-                    # Publish detected object with 3D coordinates
-                    self.detection_pub.publish(f"Detected {name} at ({x:.2f}, {y:.2f}, {z:.2f}) with confidence {confidence:.2f}")
 
         # Display the image with detections
         cv2.imshow("YOLOv8 Object Tracker", cv_image)

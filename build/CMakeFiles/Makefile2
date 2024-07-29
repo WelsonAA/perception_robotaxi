@@ -54,14 +54,12 @@ CMAKE_BINARY_DIR = /home/welson03/Desktop/ever24/build
 
 # The main recursive "all" target.
 all: gtest/all
-all: vision_ws/all
 all: vision/all
 
 .PHONY : all
 
 # The main recursive "preinstall" target.
 preinstall: gtest/preinstall
-preinstall: vision_ws/preinstall
 preinstall: vision/preinstall
 
 .PHONY : preinstall
@@ -73,7 +71,6 @@ clean: CMakeFiles/clean_test_results.dir/clean
 clean: CMakeFiles/tests.dir/clean
 clean: CMakeFiles/download_extra_data.dir/clean
 clean: gtest/clean
-clean: vision_ws/clean
 clean: vision/clean
 
 .PHONY : clean
@@ -166,24 +163,6 @@ vision/clean: vision/CMakeFiles/geometry_msgs_generate_messages_nodejs.dir/clean
 vision/clean: vision/CMakeFiles/std_msgs_generate_messages_cpp.dir/clean
 
 .PHONY : vision/clean
-
-#=============================================================================
-# Directory level rules for directory vision_ws
-
-# Recursive "all" directory target.
-vision_ws/all:
-
-.PHONY : vision_ws/all
-
-# Recursive "preinstall" directory target.
-vision_ws/preinstall:
-
-.PHONY : vision_ws/preinstall
-
-# Recursive "clean" directory target.
-vision_ws/clean: vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/clean
-
-.PHONY : vision_ws/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/doxygen.dir
@@ -324,8 +303,8 @@ CMakeFiles/download_extra_data.dir/clean:
 # Target rules for target gtest/googlemock/CMakeFiles/gmock_main.dir
 
 # All Build rule for target.
-gtest/googlemock/CMakeFiles/gmock_main.dir/all: gtest/googletest/CMakeFiles/gtest.dir/all
 gtest/googlemock/CMakeFiles/gmock_main.dir/all: gtest/googlemock/CMakeFiles/gmock.dir/all
+gtest/googlemock/CMakeFiles/gmock_main.dir/all: gtest/googletest/CMakeFiles/gtest.dir/all
 	$(MAKE) -f gtest/googlemock/CMakeFiles/gmock_main.dir/build.make gtest/googlemock/CMakeFiles/gmock_main.dir/depend
 	$(MAKE) -f gtest/googlemock/CMakeFiles/gmock_main.dir/build.make gtest/googlemock/CMakeFiles/gmock_main.dir/build
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/welson03/Desktop/ever24/build/CMakeFiles --progress-num=3,4 "Built target gmock_main"
@@ -428,33 +407,6 @@ gtest: gtest/googletest/CMakeFiles/gtest.dir/rule
 gtest/googletest/CMakeFiles/gtest.dir/clean:
 	$(MAKE) -f gtest/googletest/CMakeFiles/gtest.dir/build.make gtest/googletest/CMakeFiles/gtest.dir/clean
 .PHONY : gtest/googletest/CMakeFiles/gtest.dir/clean
-
-#=============================================================================
-# Target rules for target vision_ws/CMakeFiles/_catkin_empty_exported_target.dir
-
-# All Build rule for target.
-vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/all:
-	$(MAKE) -f vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/build.make vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/depend
-	$(MAKE) -f vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/build.make vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/welson03/Desktop/ever24/build/CMakeFiles --progress-num= "Built target _catkin_empty_exported_target"
-.PHONY : vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/all
-
-# Build rule for subdir invocation for target.
-vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/welson03/Desktop/ever24/build/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/welson03/Desktop/ever24/build/CMakeFiles 0
-.PHONY : vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/rule
-
-# Convenience name for target.
-_catkin_empty_exported_target: vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/rule
-
-.PHONY : _catkin_empty_exported_target
-
-# clean rule for target.
-vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/clean:
-	$(MAKE) -f vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/build.make vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/clean
-.PHONY : vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 #=============================================================================
 # Target rules for target vision/CMakeFiles/std_msgs_generate_messages_nodejs.dir

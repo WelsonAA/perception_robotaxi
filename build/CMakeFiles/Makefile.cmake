@@ -15,12 +15,9 @@ set(CMAKE_MAKEFILE_DEPENDS
   "catkin_generated/order_packages.cmake"
   "vision/catkin_generated/ordered_paths.cmake"
   "vision/catkin_generated/package.cmake"
-  "vision_ws/catkin_generated/package.cmake"
   "/home/welson03/Desktop/ever24/src/CMakeLists.txt"
   "/home/welson03/Desktop/ever24/src/vision/CMakeLists.txt"
   "/home/welson03/Desktop/ever24/src/vision/package.xml"
-  "/home/welson03/Desktop/ever24/src/vision_ws/CMakeLists.txt"
-  "/home/welson03/Desktop/ever24/src/vision_ws/package.xml"
   "/opt/ros/noetic/share/catkin/cmake/all.cmake"
   "/opt/ros/noetic/share/catkin/cmake/assert.cmake"
   "/opt/ros/noetic/share/catkin/cmake/atomic_configure_file.cmake"
@@ -183,7 +180,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
   "gtest/CMakeFiles/CMakeDirectoryInformation.cmake"
   "gtest/googlemock/CMakeFiles/CMakeDirectoryInformation.cmake"
   "gtest/googletest/CMakeFiles/CMakeDirectoryInformation.cmake"
-  "vision_ws/CMakeFiles/CMakeDirectoryInformation.cmake"
   "vision/CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
@@ -198,7 +194,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "gtest/googlemock/CMakeFiles/gmock.dir/DependInfo.cmake"
   "gtest/googletest/CMakeFiles/gtest_main.dir/DependInfo.cmake"
   "gtest/googletest/CMakeFiles/gtest.dir/DependInfo.cmake"
-  "vision_ws/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake"
   "vision/CMakeFiles/std_msgs_generate_messages_nodejs.dir/DependInfo.cmake"
   "vision/CMakeFiles/std_msgs_generate_messages_py.dir/DependInfo.cmake"
   "vision/CMakeFiles/sensor_msgs_generate_messages_cpp.dir/DependInfo.cmake"

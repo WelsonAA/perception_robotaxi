@@ -35,14 +35,6 @@
 /home/welson03/Desktop/ever24/build/gtest/googletest/CMakeFiles/test.dir
 /home/welson03/Desktop/ever24/build/gtest/googletest/CMakeFiles/gtest_main.dir
 /home/welson03/Desktop/ever24/build/gtest/googletest/CMakeFiles/gtest.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/install/strip.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/install/local.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/install.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/list_install_components.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/rebuild_cache.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/edit_cache.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/test.dir
-/home/welson03/Desktop/ever24/build/vision_ws/CMakeFiles/_catkin_empty_exported_target.dir
 /home/welson03/Desktop/ever24/build/vision/CMakeFiles/rebuild_cache.dir
 /home/welson03/Desktop/ever24/build/vision/CMakeFiles/edit_cache.dir
 /home/welson03/Desktop/ever24/build/vision/CMakeFiles/test.dir
