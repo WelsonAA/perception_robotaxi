@@ -54,7 +54,10 @@ class YoloV8ObjectTracker:
         rospy.loginfo(f"cv_image type: {type(cv_image)}, shape: {cv_image.shape}")
 
         # Perform object detection
-        results = self.model(cv_image)
+        #results = self.model(cv_image)
+
+        # Perform object tracking
+        results = self.model.track(cv_image)
 
         if self.depth_image is not None and self.rgb_k_matrix is not None:
             for result in results:
