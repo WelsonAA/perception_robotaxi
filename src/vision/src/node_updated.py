@@ -7,7 +7,7 @@ from cv_bridge import CvBridge, CvBridgeError
 import cv2
 import numpy as np
 from ultralytics import YOLO
-model = YOLO('/home/welson03/Desktop/ever24/src/vision/src/yolov8s.pt')
+
 class YoloV8ObjectTracker:
     def __init__(self):
         self.bridge = CvBridge()
@@ -16,13 +16,11 @@ class YoloV8ObjectTracker:
         self.rgb_kmatrix_sub = rospy.Subscriber("/camera/color/camera_info", CameraInfo, self.rgb_kmatrix_callback)
         self.depth_kmatrix_sub = rospy.Subscriber("/camera/depth/camera_info", CameraInfo, self.depth_kmatrix_callback)
         self.detection_pub = rospy.Publisher("object_detection", String, queue_size=10)
-        #self.model = YOLO('/home/welson03/Desktop/ever24/src/vision/src/yolov8s.pt')  # Update with your YOLOv8 model path
+        self.model = YOLO('/home/welson03/Desktop/ever24/src/vision/src/best.pt')  # Update with your YOLOv8 model path
 
         self.depth_image = None
         self.rgb_k_matrix = None
         self.depth_k_matrix = None
-        print("hiiii")
-        
 
     def rgb_kmatrix_callback(self, data):
         self.rgb_k_matrix = np.array(data.K).reshape((3, 3))
@@ -33,47 +31,66 @@ class YoloV8ObjectTracker:
     def depth_callback(self, data):
         try:
             depth_image = self.bridge.imgmsg_to_cv2(data, "passthrough")
-            self.depth_image = cv2.flip(depth_image, 1)  # Flip depth image on the x-axis
+            self.depth_image = cv2.rotate(depth_image, cv2.ROTATE_180)
+            #self.depth_image = depth_image[:, ::-1]  # Flip depth image on the x-axis using NumPy slicing
+            #rospy.loginfo("Depth image flipped")
         except CvBridgeError as e:
-            print(e)
+            rospy.logerr(f"Failed to convert depth image: {e}")
             self.depth_image = None
 
     def image_callback(self, data):
         try:
             cv_image = self.bridge.imgmsg_to_cv2(data, "bgr8")
-            cv_image = cv2.flip(cv_image, 1)  # Flip RGB image on the x-axis
+            cv_image = cv2.rotate(cv_image, cv2.ROTATE_180)
+            #cv_image = cv_image[:, ::-1]  # Flip RGB image on the x-axis using NumPy slicing
+            #rospy.loginfo("RGB image flipped")
         except CvBridgeError as e:
-            print(e)
+            rospy.logerr(f"Failed to convert RGB image: {e}")
             return
+        
+        # Verify image type and shape
+        rospy.loginfo(f"cv_image type: {type(cv_image)}, shape: {cv_image.shape}")
 
-        # Perform object detection and tracking
-        results = model.track(cv_image)
-        detected_objects = results.pandas().xyxy[0]
+        # Perform object detection
+        results = self.model(cv_image)
 
         if self.depth_image is not None and self.rgb_k_matrix is not None:
-            for index, row in detected_objects.iterrows():
-                xmin, ymin, xmax, ymax, confidence, class_id, name, track_id = row
-                cv2.rectangle(cv_image, (int(xmin), int(ymin)), (int(xmax), int(ymax)), (0, 255, 0), 2)
-                cv2.putText(cv_image, f"{name} ID:{track_id}", (int(xmin), int(ymin) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (36, 255, 12), 2)
+            for result in results:
+                boxes = result.boxes  # Get the boxes attribute
+                for box in boxes:
+                    # Extract coordinates
+                    xmin, ymin, xmax, ymax = map(int, box.xyxy[0])
+                    confidence = float(box.conf[0])
+                    class_id = int(box.cls[0])
+                    name = result.names[class_id]
 
-                # Calculate the center of the bounding box
-                x_center = int((xmin + xmax) / 2)
-                y_center = int((ymin + ymax) / 2)
+                    try:
+                        # Draw the bounding box and display the coordinates
+                        cv2.rectangle(cv_image, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
+                        label = f"{name} {confidence:.2f} ({xmin},{ymin})"
+                        cv2.putText(cv_image, label, (xmin, ymin - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (36, 255, 12), 2)
+                    except Exception as e:
+                        rospy.logerr(f"Failed to draw rectangle or text on cv_image: {e}")
+                        continue
 
-                # Get the depth value at the center of the bounding box
-                depth = self.depth_image[y_center, x_center]
+                    # Calculate the center of the bounding box
+                    x_center = (xmin + xmax) // 2
+                    y_center = (ymin + ymax) // 2
 
-                # Calculate 3D coordinates in the camera coordinate system using RGB camera matrix
-                x = (x_center - self.rgb_k_matrix[0, 2]) * depth / self.rgb_k_matrix[0, 0]
-                y = (y_center - self.rgb_k_matrix[1, 2]) * depth / self.rgb_k_matrix[1, 1]
-                z = depth
+                    # Get the depth value at the center of the bounding box
+                    depth = self.depth_image[y_center, x_center]
 
-                # Publish detected object with 3D coordinates and track ID
-                self.detection_pub.publish(f"Detected {name} ID:{track_id} at ({x:.2f}, {y:.2f}, {z:.2f}) with confidence {confidence:.2f}")
+                    # Calculate 3D coordinates in the camera coordinate system using RGB camera matrix
+                    x = (x_center - self.rgb_k_matrix[0, 2]) * depth / self.rgb_k_matrix[0, 0]
+                    y = (y_center - self.rgb_k_matrix[1, 2]) * depth / self.rgb_k_matrix[1, 1]
+                    z = depth
 
-        # Display the image with detections and tracking
+                    # Publish detected object with 3D coordinates
+                    self.detection_pub.publish(f"Detected {name} at ({x:.2f}, {y:.2f}, {z:.2f}) with confidence {confidence:.2f}")
+
+        # Display the image with detections
         cv2.imshow("YOLOv8 Object Tracker", cv_image)
-        cv2.waitKey(5)
+        cv2.waitKey(3)
 
 def main():
     rospy.init_node('yolov8_object_tracker', anonymous=True)
@@ -81,7 +98,7 @@ def main():
     try:
         rospy.spin()
     except KeyboardInterrupt:
-        print("Shutting down")
+        rospy.loginfo("Shutting down")
     cv2.destroyAllWindows()
 
 if __name__ == '__main__':
